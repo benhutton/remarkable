@@ -11,9 +11,9 @@ group :development do
 end
 
 group :test do
-  gem 'rspec', '2.0.0.beta.20'
-  gem 'rspec-core', '2.0.0.beta.20'
-  gem 'rspec-expectations', '2.0.0.beta.20'
-  gem 'rspec-mocks', '2.0.0.beta.20'
-  gem 'rspec-rails', '2.0.0.beta.20'
+  gem 'rspec'
+  gem 'rspec-core'
+  gem 'rspec-expectations'
+  gem 'rspec-mocks'
+  gem 'rspec-rails'
 end
