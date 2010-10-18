@@ -11,7 +11,7 @@ REMARKABLE_GEMS = [
   :remarkable_activemodel,
   :remarkable_activerecord,
   #:remarkable_datamapper,
-  #:remarkable_rails
+  :remarkable_rails
 ]
 
 REMARKABLE_GEMS_PATHS = REMARKABLE_GEMS.map{|g| File.join(current_dir, g.to_s)}
