@@ -1,24 +1,8 @@
 # Load Remarkable
-unless Object.const_defined?('Remarkable')
-  begin
-    require 'remarkable'
-  rescue LoadError
-    require 'rubygems'
-    gem 'remarkable'
-    require 'remarkable'
-  end
-end
+require 'remarkable/core'
 
 # Load spec/rails
-if defined?(Spec)
-  begin
-    require 'spec/rails'
-  rescue LoadError
-    require 'rubygems'
-    gem 'rspec-rails'
-    require 'spec/rails'
-  end
-end
+require 'rspec'
 
 # Load Remarkable Rails base files
 dir = File.dirname(__FILE__)
