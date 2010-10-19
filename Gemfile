@@ -11,6 +11,7 @@ group :development do
 end
 
 group :test do
+  gem 'rails'
   gem 'rspec'
   gem 'rspec-core'
   gem 'rspec-expectations'
