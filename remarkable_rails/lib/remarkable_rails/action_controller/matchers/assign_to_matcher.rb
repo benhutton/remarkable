@@ -32,7 +32,8 @@ module Remarkable
           end
 
           def assigns
-            @subject.response.template.assigns.with_indifferent_access
+            #@subject.response.template.assigns.with_indifferent_access
+            @subject.instance_variable_get(:@assigns).with_indifferent_access
           end
 
           def value_to_compare?
