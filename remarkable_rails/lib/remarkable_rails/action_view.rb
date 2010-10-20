@@ -12,7 +12,7 @@ Dir[File.join(dir, 'action_view', 'matchers', '*.rb')].each do |file|
 end
 
 # Iinclude matchers in Spec::Rails
-if defined?(Spec::Rails)
-  Remarkable.include_matchers!(Remarkable::ActionView, Spec::Rails::Example::FunctionalExampleGroup)
+if defined?(RSpec::Rails)
+  Remarkable.include_matchers!(Remarkable::ActionView, RSpec::Rails::ViewExampleGroup)
 end
 

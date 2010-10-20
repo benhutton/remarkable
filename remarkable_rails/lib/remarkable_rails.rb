@@ -2,7 +2,7 @@
 require 'remarkable/core'
 
 # Load spec/rails
-require 'rspec'
+# require 'rspec/rails'
 
 # Load Remarkable Rails base files
 dir = File.dirname(__FILE__)
