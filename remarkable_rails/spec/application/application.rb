@@ -7,9 +7,10 @@ end
 class Task; end
 
 # Define routes
-ActionController::Routing::Routes.draw do |map|
-  map.resources :projects, :has_many => :tasks
-  map.connect ':controller/:action/:id'
-  map.connect ':controller/:action/:id.:format'
+Rails.application.routes.draw do 
+  resources :projects do
+    resources :tasks
+  end
+  match ':controller(/:action(/:id(.:format)))'
 end
 
