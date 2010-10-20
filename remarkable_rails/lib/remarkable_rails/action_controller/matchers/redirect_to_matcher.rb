@@ -2,7 +2,6 @@ module Remarkable
   module ActionController
     module Matchers
       class RedirectToMatcher < Remarkable::ActionController::Base #:nodoc:
-        include ::ActionController::StatusCodes
 
         arguments :expected, :block => true
         optional :with, :block => true
@@ -25,8 +24,8 @@ module Remarkable
           def status_matches?
             return true unless @options.key?(:with)
 
-            actual_status   = interpret_status(@response.response_code)
-            expected_status = interpret_status(@options[:with])
+            actual_status   = @response.response_code
+            expected_status = @options[:with]
 
             return actual_status == expected_status, :status => @response.response_code.inspect
           end
