@@ -181,11 +181,11 @@ module Remarkable
 
       def self.included(base) #:nodoc:
         base.extend ClassMethods
-        base.class_inheritable_reader :expects_chain, :default_action, :default_mime,
-                                      :default_verb, :default_params, :default_xhr,
-                                      :before_all_block
         base.class_eval do
           class << self
+            attr_reader :expects_chain, :default_action, :default_mime,
+                                          :default_verb, :default_params, :default_xhr,
+                                          :before_all_block
             alias_method :context, :describe
           end
         end
