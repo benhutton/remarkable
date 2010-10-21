@@ -1,5 +1,5 @@
-module Remarkable
-  module ActionController
+module RSpec
+  module Core
 
     # Macro stubs makes stubs and expectations easier, more readable and DRY.
     #
@@ -176,22 +176,14 @@ module Remarkable
     #     end
     #   end
     #
-    module MacroStubs
+    class ExampleGroup
       HTTP_VERBS_METHODS = [:get, :get!, :post, :post!, :put, :put!, :delete, :delete!]
 
-      def self.included(base) #:nodoc:
-        base.extend ClassMethods
-        base.class_eval do
-          class << self
-            attr_reader :expects_chain, :default_action, :default_mime,
-                                          :default_verb, :default_params, :default_xhr,
-                                          :before_all_block
-            alias_method :context, :describe
-          end
-        end
-      end
+      class_inheritable_reader :expects_chain, :default_action, :default_mime,
+        :default_verb, :default_params, :default_xhr,
+        :before_all_block
 
-      module ClassMethods
+      module NewClassMethods
 
         # Creates a chain that will be evaluated as stub or expectation. The
         # first parameter is the method expected. You can also specify multiple
@@ -232,6 +224,10 @@ module Remarkable
           args.each do |arg|
             write_inheritable_array(:expects_chain, [ [ arg, options, block] ])
           end
+        end
+
+        def crazy_method
+          puts 'HI!!!'
         end
 
         # The mime type of the request. The value given will be called transformed
@@ -370,41 +366,68 @@ module Remarkable
         #
         #   Remarkable.add_locale locale_path
         #
-        def describe(*args, &block)
-          options = args.first.is_a?(Hash) ? args.first : {}
-          verb    = (options.keys & HTTP_VERBS_METHODS).first
-
-          if verb
-            action = options.delete(verb)
-            verb   = verb.to_s
-
-            description = Remarkable.t 'remarkable.action_controller.responding',
-                                        :default => "responding to \#{{verb}} {{action}}",
-                                        :verb => verb.sub('!', '').upcase, :action => action
-
-            send_args = [ verb, action, options ]
-          elsif args.first.is_a?(Mime::Type)
-            mime = args.first
-
-            description = Remarkable.t 'remarkable.action_controller.mime_type',
-                                        :default => "with #{mime.to_sym}",
-                                        :format => mime.to_sym, :content_type => mime.to_s
-
-            send_args = [ :mime, mime ]
-          else # return if no special type was found
-            return super(*args, &block)
-          end
-
-          args.shift
-          args.unshift(description)
-
-          # Creates an example group, send the method and eval the given block.
-          #
-          example_group = super(*args) do
-            send(*send_args)
-            instance_eval(&block)
-          end
+        def other_describe(*args, &example_group_block)
+          puts "inside other describe"
+          other_other_describe(*args, &example_group_block)
         end
+
+        def other_other_describe(*args, &example_group_block)
+          puts "inside other other describe"
+          @_subclass_count ||= 0
+          @_subclass_count += 1
+          args << {} unless args.last.is_a?(Hash)
+          args.last.update(:example_group_block => example_group_block)
+
+          # TODO 2010-05-05: Because we don't know if const_set is thread-safe
+          child = const_set(
+            "Nested_#{@_subclass_count}",
+            subclass(self, args, &example_group_block)
+          )
+          children << child
+          child
+        end
+
+        def describe_with_verb_params(*args, &block)
+          puts "inside describe_with_verb_params"
+          puts args
+          # debugger
+          describe_without_verb_params(*args, &block)
+          # options = args.first.is_a?(Hash) ? args.first : {}
+          # verb    = (options.keys & HTTP_VERBS_METHODS).first
+
+          # if verb
+            # action = options.delete(verb)
+            # verb   = verb.to_s
+
+            # description = Remarkable.t 'remarkable.action_controller.responding',
+                                        # :default => "responding to \#{{verb}} {{action}}",
+                                        # :verb => verb.sub('!', '').upcase, :action => action
+
+            # send_args = [ verb, action, options ]
+          # elsif args.first.is_a?(Mime::Type)
+            # mime = args.first
+
+            # description = Remarkable.t 'remarkable.action_controller.mime_type',
+                                        # :default => "with #{mime.to_sym}",
+                                        # :format => mime.to_sym, :content_type => mime.to_s
+
+            # send_args = [ :mime, mime ]
+          # else # return if no special type was found
+            # return super(*args, &block)
+          # end
+
+          # args.shift
+          # args.unshift(description)
+
+          # # Creates an example group, send the method and eval the given block.
+          # #
+          # example_group = super(*args) do
+            # send(*send_args)
+            # instance_eval(&block)
+          # end
+        end
+
+        #alias_method_chain :describe, :verb_params
         
         # Creates mock methods automatically.
         #
@@ -572,6 +595,10 @@ module Remarkable
           end
         end
 
+      extend NewClassMethods
+      class << self
+        # alias_method_chain :describe, :verb_params
+      end
     end
   end
 end

@@ -14,7 +14,7 @@ end
 
 # Include macro_stubs and matchers in Spec::Rails
 if defined?(RSpec::Rails)
-  RSpec::Rails::ControllerExampleGroup.send :include, Remarkable::ActionController::MacroStubs
+  # RSpec::Rails::ControllerExampleGroup.send :include, Remarkable::ActionController::MacroStubs
 
   Remarkable.include_matchers!(Remarkable::ActionController, RSpec::Rails::ControllerExampleGroup)
   Remarkable.include_matchers!(Remarkable::ActionController, RSpec::Rails::RoutingExampleGroup)
