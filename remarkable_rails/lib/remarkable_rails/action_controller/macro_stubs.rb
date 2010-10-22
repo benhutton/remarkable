@@ -1,3 +1,12 @@
+# class Object
+  # puts "including remarkable object"
+  # def describe(*args, &example_group_block)
+    # puts "inside remarkable object describe (#{args}) with #{self.class.included_modules.count} included modules"
+    # args << {} unless args.last.is_a?(Hash)
+    # RSpec::Core::ExampleGroup.describe_without_verb_params(*args, &example_group_block)
+  # end
+# end
+
 module RSpec
   module Core
 
@@ -366,68 +375,45 @@ module RSpec
         #
         #   Remarkable.add_locale locale_path
         #
-        def other_describe(*args, &example_group_block)
-          puts "inside other describe"
-          other_other_describe(*args, &example_group_block)
-        end
 
-        def other_other_describe(*args, &example_group_block)
-          puts "inside other other describe"
-          @_subclass_count ||= 0
-          @_subclass_count += 1
-          args << {} unless args.last.is_a?(Hash)
-          args.last.update(:example_group_block => example_group_block)
-
-          # TODO 2010-05-05: Because we don't know if const_set is thread-safe
-          child = const_set(
-            "Nested_#{@_subclass_count}",
-            subclass(self, args, &example_group_block)
-          )
-          children << child
-          child
-        end
 
         def describe_with_verb_params(*args, &block)
           puts "inside describe_with_verb_params"
-          puts args
-          # debugger
-          describe_without_verb_params(*args, &block)
-          # options = args.first.is_a?(Hash) ? args.first : {}
-          # verb    = (options.keys & HTTP_VERBS_METHODS).first
+          options = args.first.is_a?(Hash) ? args.first : {}
+          verb    = (options.keys & HTTP_VERBS_METHODS).first
 
-          # if verb
-            # action = options.delete(verb)
-            # verb   = verb.to_s
+          if verb
+            action = options.delete(verb)
+            verb   = verb.to_s
 
-            # description = Remarkable.t 'remarkable.action_controller.responding',
-                                        # :default => "responding to \#{{verb}} {{action}}",
-                                        # :verb => verb.sub('!', '').upcase, :action => action
+            description = Remarkable.t 'remarkable.action_controller.responding',
+                                        :default => "responding to \#{{verb}} {{action}}",
+                                        :verb => verb.sub('!', '').upcase, :action => action
 
-            # send_args = [ verb, action, options ]
-          # elsif args.first.is_a?(Mime::Type)
-            # mime = args.first
+            send_args = [ verb, action, options ]
+          elsif args.first.is_a?(Mime::Type)
+            mime = args.first
 
-            # description = Remarkable.t 'remarkable.action_controller.mime_type',
-                                        # :default => "with #{mime.to_sym}",
-                                        # :format => mime.to_sym, :content_type => mime.to_s
+            description = Remarkable.t 'remarkable.action_controller.mime_type',
+                                        :default => "with #{mime.to_sym}",
+                                        :format => mime.to_sym, :content_type => mime.to_s
 
-            # send_args = [ :mime, mime ]
-          # else # return if no special type was found
-            # return super(*args, &block)
-          # end
+            send_args = [ :mime, mime ]
+          else # return if no special type was found
+            return describe_without_verb_params(*args, &block)
+          end
 
-          # args.shift
-          # args.unshift(description)
+          args.shift
+          args.unshift(description)
 
-          # # Creates an example group, send the method and eval the given block.
-          # #
-          # example_group = super(*args) do
-            # send(*send_args)
-            # instance_eval(&block)
-          # end
+          # Creates an example group, send the method and eval the given block.
+          #
+          example_group = describe_without_verb_params(*args) do
+            send(*send_args)
+            instance_eval(&block)
+          end
         end
 
-        #alias_method_chain :describe, :verb_params
         
         # Creates mock methods automatically.
         #
@@ -597,8 +583,45 @@ module RSpec
 
       extend NewClassMethods
       class << self
-        # alias_method_chain :describe, :verb_params
+        alias_method :describe_without_verb_params, :describe
+        alias_method :describe, :describe_with_verb_params
       end
     end
   end
 end
+
+# module RSpec
+  # module Core
+    # class ExampleGroup
+      # def self.describe_with_verb_params(*args, &block)
+        # puts "in describe with verb params"
+        # describe_without_verb_params(*args, &block)
+      # end
+
+      # class << self
+        # alias_method :describe_without_verb_params, :describe
+        # alias_method :describe, :describe_with_verb_params
+      # end
+    # end
+  # end
+# end
+# RSpec::Core::ExampleGroup.instance_eval do
+  # alias_method :describe_without_verb_params, :describe
+  # alias_method :describe, :describe_with_verb_params
+# end
+#
+
+# class Object
+  # def describe(*args, &example_group_block)
+    # args << {} unless args.last.is_a?(Hash)
+    # RSpec::Core::ExampleGroup.describe_without_verb_params(*args, &example_group_block)
+  # end
+# end
+
+# class Object
+  # debugger
+  # def describe(*args, &example_group_block)
+    # args << {} unless args.last.is_a?(Hash)
+    # RSpec::Core::ExampleGroup.describe_without_verb_params(*args, &example_group_block)
+  # end
+# end
