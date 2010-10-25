@@ -1,11 +1,3 @@
-class Object
-  puts "including remarkable object"
-  def describe(*args, &example_group_block)
-    puts "inside remarkable object describe (#{args}) with #{self.class.included_modules.count} included modules"
-    args << {} unless args.last.is_a?(Hash)
-    RSpec::Core::ExampleGroup.describe_without_verb_params(*args, &example_group_block)
-  end
-end
 # Load core files
 require 'remarkable/core/version'
 require 'remarkable/core/matchers'
