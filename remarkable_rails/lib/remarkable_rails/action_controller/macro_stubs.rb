@@ -378,7 +378,6 @@ module RSpec
 
 
         def describe_with_verb_params(*args, &block)
-          puts "inside describe_with_verb_params"
           options = args.first.is_a?(Hash) ? args.first : {}
           verb    = (options.keys & HTTP_VERBS_METHODS).first
 
@@ -589,39 +588,3 @@ module RSpec
     end
   end
 end
-
-# module RSpec
-  # module Core
-    # class ExampleGroup
-      # def self.describe_with_verb_params(*args, &block)
-        # puts "in describe with verb params"
-        # describe_without_verb_params(*args, &block)
-      # end
-
-      # class << self
-        # alias_method :describe_without_verb_params, :describe
-        # alias_method :describe, :describe_with_verb_params
-      # end
-    # end
-  # end
-# end
-# RSpec::Core::ExampleGroup.instance_eval do
-  # alias_method :describe_without_verb_params, :describe
-  # alias_method :describe, :describe_with_verb_params
-# end
-#
-
-# class Object
-  # def describe(*args, &example_group_block)
-    # args << {} unless args.last.is_a?(Hash)
-    # RSpec::Core::ExampleGroup.describe_without_verb_params(*args, &example_group_block)
-  # end
-# end
-
-# class Object
-  # debugger
-  # def describe(*args, &example_group_block)
-    # args << {} unless args.last.is_a?(Hash)
-    # RSpec::Core::ExampleGroup.describe_without_verb_params(*args, &example_group_block)
-  # end
-# end
