@@ -558,6 +558,16 @@ module RSpec
           params ||= default_params
           xhr    ||= default_xhr
 
+          parent = self.class.parent
+          until mime || verb || action || params || xhr
+            mime   ||= parent.default_mime
+            verb   ||= parent.default_verb
+            action ||= parent.default_action
+            params ||= parent.default_params
+            xhr    ||= parent.default_xhr
+            parent = parent.parent
+          end
+
           raise ScriptError, "No action was performed or declared." unless verb && action
 
           request.env["HTTP_ACCEPT"] ||= mime.to_s                if mime
