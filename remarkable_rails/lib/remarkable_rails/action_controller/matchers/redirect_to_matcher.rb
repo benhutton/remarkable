@@ -71,7 +71,7 @@ module Remarkable
           def expected_url
             case @expected
               when Hash
-                return ::ActionController::UrlRewriter.new(@request, {}).rewrite(@expected)
+                return @subject.url_for(@expected)
               when :back
                 return @request.env['HTTP_REFERER']
               when %r{^\w+://.*}
