@@ -29,10 +29,10 @@ Remarkable.add_locale File.join(dir, '..', 'locale', 'en.yml')
 #
 #   Remarkable.include_matchers!(MyPlugin::Matchers, Spec::Rails::Example::ModelExampleGroup)
 #
-if defined?(RAILS_ROOT)
+if defined?(Rails.root)
   files = []
-  files += Dir.glob(File.join(RAILS_ROOT, "spec", "remarkable", "*"))
-  files += Dir.glob(File.join(RAILS_ROOT, "vendor", "{plugins,gems}", "*", "remarkable", "*"))
+  files += Dir.glob(File.join(Rails.root, "spec", "remarkable", "*"))
+  files += Dir.glob(File.join(Rails.root, "vendor", "{plugins,gems}", "*", "remarkable", "*"))
   files.each do |file|
     begin
       case File.extname(file)

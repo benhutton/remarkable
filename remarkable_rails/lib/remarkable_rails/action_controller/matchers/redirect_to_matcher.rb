@@ -55,7 +55,7 @@ module Remarkable
 
           def path_hash(url)
             path = url.sub(/^\w+:\/\/#{@request.host}(?::\d+)?/, "").split("?", 2)[0]
-            ::ActionController::Routing::Routes.recognize_path path, { :method => :get }
+            ::Rails.application.routes.recognize_path path, { :method => :get }
           end
 
           def query_hash(url)
