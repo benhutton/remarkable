@@ -1,14 +1,12 @@
-# class Object
-  # puts "including remarkable object"
-  # def describe(*args, &example_group_block)
-    # puts "inside remarkable object describe (#{args}) with #{self.class.included_modules.count} included modules"
-    # args << {} unless args.last.is_a?(Hash)
-    # RSpec::Core::ExampleGroup.describe_without_verb_params(*args, &example_group_block)
-  # end
-# end
-
 module RSpec
   module Core
+
+    # This is a hack that we need to run the alias method chain describe
+    class Metadata < Hash
+      def first_caller_from_outside_rspec_from_caller(list)
+        list.detect {|l| l !~ /(\/lib\/rspec\/core)|remarkable_rails/}
+      end
+    end
 
     # Macro stubs makes stubs and expectations easier, more readable and DRY.
     #
@@ -233,10 +231,6 @@ module RSpec
           args.each do |arg|
             write_inheritable_array(:expects_chain, [ [ arg, options, block] ])
           end
-        end
-
-        def crazy_method
-          puts 'HI!!!'
         end
 
         # The mime type of the request. The value given will be called transformed
